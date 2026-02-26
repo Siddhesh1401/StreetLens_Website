@@ -1,0 +1,92 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 15, 23, 42;
+  --background-rgb: 248, 250, 252;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+}
+
+/* ── Print styles ──────────────────────────────── */
+.print-only { display: none; }
+
+@media print {
+  .no-print { display: none !important; }
+
+  .print-only {
+    display: block !important;
+    padding: 32px;
+    font-family: sans-serif;
+    color: #0f172a;
+  }
+
+  .print-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 2px solid #1d4ed8;
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+  }
+  .print-title { font-size: 22px; font-weight: 800; color: #1d4ed8; margin: 0; }
+  .print-subtitle { font-size: 12px; color: #64748b; margin: 2px 0 0; }
+
+  .print-badge {
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .print-badge[data-status="Pending"]     { background: #fef3c7; color: #92400e; }
+  .print-badge[data-status="In Progress"] { background: #dbeafe; color: #1e40af; }
+  .print-badge[data-status="Resolved"]    { background: #d1fae5; color: #065f46; }
+
+  .print-row {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 20px;
+    align-items: flex-start;
+  }
+  .print-photo {
+    width: 260px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+  }
+  .print-qr-wrap { text-align: center; }
+  .print-qr-label { font-size: 10px; color: #94a3b8; margin-top: 4px; }
+
+  .print-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-bottom: 24px;
+  }
+  .print-table td {
+    padding: 7px 10px;
+    border: 1px solid #e2e8f0;
+  }
+  .print-table tr:nth-child(odd) td { background: #f8fafc; }
+  .print-table td:first-child {
+    font-weight: 600;
+    color: #475569;
+    width: 160px;
+  }
+
+  .print-footer {
+    font-size: 10px;
+    color: #94a3b8;
+    text-align: center;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 10px;
+    margin-top: 24px;
+  }
+}
