@@ -20,8 +20,8 @@ Admin dashboard for **StreetLens** — a civic issue reporting app where citizen
 
 ## Firebase Config
 - **Project:** streetlens-8a15c
-- **apiKey:** AIzaSyBS05y_epxdsT1J1QlfUaa1vKxnBsWPVIA
-- **appId:** 1:238699114278:web:310b2a9308d5972ad9dbe7
+- **apiKey:** (stored in `.env.local` — never commit this file)
+- **appId:** (stored in `.env.local` — never commit this file)
 - Credentials live in `.env.local` (gitignored)
 - **Firestore collections:**
   - `/issues/{issueId}` — fields: user_id, image_url, category, description, latitude, longitude, status, upvotes, assigned_worker, created_at, updated_at, user_name
