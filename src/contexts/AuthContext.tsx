@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   createContext,
@@ -6,32 +6,33 @@ import {
   useEffect,
   useState,
   ReactNode,
-} from 'react';
+} from "react";
 import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
   signOut,
   User,
-} from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
-import { auth, db } from '@/lib/firebase';
-import { useRouter } from 'next/navigation';
+} from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import { auth, db } from "@/lib/firebase";
+import { useRouter } from "next/navigation";
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-/** Returns true if the uid belongs to an admin (no Firestore doc = manually
- *  created admin; doc with role "admin" = admin; role "citizen" = blocked). */
 async function isAdmin(uid: string): Promise<boolean> {
-  const snap = await getDoc(doc(db, 'users', uid));
-  if (!snap.exists()) return true;          // manually created in Firebase Console
-  return snap.data()?.role === 'admin';
+  const snap = await getDoc(doc(db, "users", uid));
+  if (!snap.exists()) return true;
+  return snap.data()?.role === "admin";
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -46,10 +47,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (admin) {
           setUser(u);
         } else {
-          // citizen trying to access admin site — sign them out silently
           await signOut(auth);
           setUser(null);
-          router.replace('/login');
+          router.replace("/login");
         }
       } else {
         setUser(null);
@@ -64,18 +64,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const admin = await isAdmin(credential.user.uid);
     if (!admin) {
       await signOut(auth);
-      throw new Error('Access denied. This portal is for admins only.');
+      throw new Error("Access denied. This portal is for admins only.");
     }
-    router.push('/dashboard');
+    router.push("/dashboard");
+  };
+
+  const loginWithGoogle = async () => {
+    const provider = new GoogleAuthProvider();
+    const credential = await signInWithPopup(auth, provider);
+    const admin = await isAdmin(credential.user.uid);
+    if (!admin) {
+      await signOut(auth);
+      throw new Error("Access denied. This portal is for admins only.");
+    }
+    router.push("/dashboard");
   };
 
   const logout = async () => {
     await signOut(auth);
-    router.push('/login');
+    router.push("/login");
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider
+      value={{ user, loading, login, loginWithGoogle, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -83,6 +96,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth() {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
+  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
   return ctx;
 }
